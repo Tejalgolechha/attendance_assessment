@@ -6,6 +6,7 @@ A full-stack Attendance Management System built with **Django REST Framework** (
 
 - **Authentication**: User / Employee login & logout.
 - **Employee Management**: Employee ID, Name, and Assigned Shift (`GS` or `NS`).
+- Added a unique Employee ID field to ensure that duplicate Employee IDs cannot be created. Also provide options to **change an employee’s assigned shift** and **delete an employee** when required.
 - **Punch In & Punch Out**: Real-time clock punch in/out or custom timestamp mode for testing edge cases.
 - **Attendance Rules Engine**:
   - **GS (General Shift)**: 12:00 PM – 9:00 PM (First Half: 12:00 PM – 4:30 PM, Second Half: 4:30 PM – 9:00 PM).
