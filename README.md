@@ -45,7 +45,7 @@ A full-stack Attendance Management System built with **Django REST Framework** (
 
 ```bash
 # Navigate to project root
-cd attentande_assesment
+cd attendance_assessment
 
 # Create & activate a Python Virtual Environment
 # Windows PowerShell:
@@ -79,7 +79,7 @@ python manage.py runserver 8000
 
 ```bash
 # Open a new terminal and navigate to frontend directory
-cd attentande_assesment/frontend
+cd attendance_assessment/frontend
 
 # Install Node dependencies
 npm install
