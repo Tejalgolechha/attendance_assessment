@@ -226,8 +226,8 @@ def validate_punch_in_rules(employee, punch_in_dt, existing_active_record=None, 
     0. Reject if punch_in_dt is in the future.
     1. Reject if there is already an active (not yet punched-out) record for this employee.
     2. Reject if punch_in_dt is outside the allowed window for the shift:
-         GS: 10:00 AM – 9:00 PM   (shift_start - 2h  to  shift_end)
-         NS: 7:30 PM – 6:30 AM    (shift_start - 2h  to  shift_end next day)
+         GS: 11:00 AM – 9:00 PM   (shift_start - 1h  to  shift_end)
+         NS: 8:30 PM – 6:30 AM    (shift_start - 1h  to  shift_end next day)
     3. Reject if a COMPLETED attendance record already exists for this employee on the
        same attendance_date (i.e. they already punched in and out today — one record per day).
     """
