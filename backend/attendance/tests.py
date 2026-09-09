@@ -243,6 +243,21 @@ class AttendanceCalculatorTests(TestCase):
     # NEW SCENARIO TESTS (from spec & grace window requirements)
     # ─────────────────────────────────────────────────────────────────
 
+    def test_gs_1250pm_to_500pm_is_absent(self):
+        """
+        GS 12:50 PM → 5:00 PM:
+        Total worked time is 250 minutes (< 270 minutes threshold).
+        Employee didn't work enough 270 mins, so first half and second half are AB and status is ABSENT.
+        """
+        punch_in  = self.aw(datetime.datetime(2026, 9, 8, 12, 50))
+        punch_out = self.aw(datetime.datetime(2026, 9, 8, 17,  0))
+        m = calculate_attendance_metrics(SHIFT_GS, self.date_sep8, punch_in, punch_out)
+        self.assertEqual(m['total_worked_minutes'], 250)
+        self.assertEqual(m['first_half'],  'AB')
+        self.assertEqual(m['second_half'], 'AB')
+        self.assertEqual(m['status'], 'ABSENT')
+
+
     def test_gs_grace_total_worked_1130am_to_417pm(self):
         """
         GS 11:30 AM → 4:17 PM:

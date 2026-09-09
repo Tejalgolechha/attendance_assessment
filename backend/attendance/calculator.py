@@ -147,6 +147,12 @@ def calculate_attendance_metrics(shift_code, attendance_date, punch_in_dt, punch
             'status':              'IN',
         }
 
+    # Total worked minutes: overlap with the scheduled shift including 15‑minute grace on both ends
+    total_worked_minutes = calculate_overlap_minutes(
+        punch_in_dt, punch_out_dt,
+        schedule['shift_start'], schedule['shift_end']
+    )
+
     raw_fh_minutes = calculate_overlap_minutes(
         punch_in_dt, punch_out_dt,
         schedule['first_half_start'], schedule['first_half_end']
@@ -157,8 +163,8 @@ def calculate_attendance_metrics(shift_code, attendance_date, punch_in_dt, punch
         schedule['second_half_start'], schedule['second_half_end']
     )
 
-    # First half borrowing rule: allow up to 60 minutes from the start of second half
-    borrow_window_start = schedule['second_half_start']
+    # First half borrowing rule: allow up to 60 minutes after first half end
+    borrow_window_start = schedule['first_half_end']
     borrow_window_end = borrow_window_start + datetime.timedelta(minutes=60)
     borrowable_minutes = min(
         calculate_overlap_minutes(
@@ -186,19 +192,14 @@ def calculate_attendance_metrics(shift_code, attendance_date, punch_in_dt, punch
     else:
         # Both raw halves are below HALF_DAY_MINUTES_THRESHOLD (second half is already AB).
         # First half borrows actual worked time in borrow window (up to 60 min) to reach >= 270 min.
-        if (raw_fh_minutes + borrowable_minutes) >= HALF_DAY_MINUTES_THRESHOLD:
+        candidate_fh_minutes = min(raw_fh_minutes + borrowable_minutes, total_worked_minutes)
+        if candidate_fh_minutes >= HALF_DAY_MINUTES_THRESHOLD:
             first_half_status = 'PR'
             second_half_status = 'AB'
-            qualifying_fh_minutes = raw_fh_minutes + borrowable_minutes
+            qualifying_fh_minutes = candidate_fh_minutes
         else:
             first_half_status = 'AB'
             second_half_status = 'AB'
-
-    # Total worked minutes: overlap with the scheduled shift including 15‑minute grace on both ends
-    total_worked_minutes = calculate_overlap_minutes(
-        punch_in_dt, punch_out_dt,
-        schedule['shift_start'], schedule['shift_end']
-    )
 
     if first_half_status == 'PR' and second_half_status == 'PR':
         status = 'PRESENT'
